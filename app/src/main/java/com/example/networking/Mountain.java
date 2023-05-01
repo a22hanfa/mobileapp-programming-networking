@@ -8,6 +8,7 @@ public class Mountain {
     private String Name;
     @SerializedName("size")
     private int Height;
+    private AuxData auxdata;
 
     public Mountain() {
 
@@ -46,6 +47,7 @@ public class Mountain {
                 "Location='" + Location + '\'' +
                 ", Name='" + Name + '\'' +
                 ", Height=" + Height +
+                ", auxdata=" + auxdata +
                 '}';
     }
 }

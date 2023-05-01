@@ -4,7 +4,14 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 import java.util.ArrayList;
 
@@ -15,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements JsonTask.JsonTask
     private final String JSON_FILE = "mountains.json";
 
     private ArrayList<Mountain> mountains = new ArrayList<>();
+    private RecyclerView recyclerView;
     private RecyclerView.Adapter adapter;
 
     @Override
@@ -22,12 +30,21 @@ public class MainActivity extends AppCompatActivity implements JsonTask.JsonTask
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new JsonFile(this, this).execute(JSON_FILE);
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        new JsonTask(this).execute(JSON_URL);
     }
 
     @Override
     public void onPostExecute(String json) {
         Log.d("MainActivity", json);
+        Gson gson = new Gson();
+        Type mountainListType = new TypeToken<ArrayList<Mountain>>(){}.getType();
+        mountains = gson.fromJson(json, mountainListType);
+
+        // Create a new adapter and set it to the RecyclerView
+        adapter = new MountainRecyclerViewAdapter(mountains);
+        recyclerView.setAdapter(adapter);
     }
 
 }
