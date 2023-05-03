@@ -47,3 +47,5 @@ return new ViewHolder(layoutInflater.inflate(R.layout.mountain_item, parent, fal
 }
 ``
 
+Slut resultat:
+![](a22hanfa-mountain-screenshot.png)
