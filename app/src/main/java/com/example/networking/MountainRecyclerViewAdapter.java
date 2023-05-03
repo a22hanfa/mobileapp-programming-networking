@@ -1,5 +1,6 @@
 package com.example.networking;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,41 +11,54 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class MountainRecyclerViewAdapter extends RecyclerView.Adapter<MountainRecyclerViewAdapter.MountainViewHolder> {
+public class MountainRecyclerViewAdapter extends RecyclerView.Adapter<MountainRecyclerViewAdapter.ViewHolder> {
 
-    private ArrayList<Mountain> mountains;
+    private ArrayList<Mountain> items;
+    private LayoutInflater layoutInflater;
+    private OnClickListener onClickListener;
 
-    public MountainRecyclerViewAdapter(ArrayList<Mountain> mountains) {
-        this.mountains = mountains;
+    MountainRecyclerViewAdapter(Context context, ArrayList<Mountain> items, OnClickListener onClickListener) {
+        this.layoutInflater = LayoutInflater.from(context);
+        this.items = items;
+        this.onClickListener = onClickListener;
     }
 
+    @Override
     @NonNull
-    @Override
-    public MountainViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.mountain_item, parent, false);
-
-        return new MountainViewHolder(itemView);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new ViewHolder(layoutInflater.inflate(R.layout.mountain_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MountainViewHolder holder, int position) {
-        Mountain mountain = mountains.get(position);
-        holder.nameTextView.setText(mountain.getName());
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        holder.mountain.setText(items.get(position).toString());
     }
 
     @Override
     public int getItemCount() {
-        return mountains.size();
+        return items.size();
     }
 
-    public static class MountainViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        TextView mountain;
 
-        public TextView nameTextView;
-
-        public MountainViewHolder(@NonNull View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
-            nameTextView = itemView.findViewById(R.id.nameTextView);
+            itemView.setOnClickListener(this);
+            mountain = itemView.findViewById(R.id.mountain);
         }
+
+        @Override
+        public void onClick(View view) {
+            onClickListener.onClick(items.get(getAdapterPosition()));
+        }
+    }
+
+    public interface OnClickListener {
+        void onClick(Mountain item);
+    }
+
+    public void setItems(ArrayList<Mountain> items) {
+        this.items = items;
     }
 }

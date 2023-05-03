@@ -2,6 +2,7 @@ package com.example.networking;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -14,37 +15,43 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class MainActivity extends AppCompatActivity implements JsonTask.JsonTaskListener {
 
+    private MountainRecyclerViewAdapter adapter;
+    private ArrayList<Mountain> items;
+    private Gson gson = new Gson();
     private final String JSON_URL = "https://mobprog.webug.se/json-api?login=brom";
-    private final String JSON_FILE = "mountains.json";
-
-    private ArrayList<Mountain> mountains = new ArrayList<>();
-    private RecyclerView recyclerView;
-    private RecyclerView.Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        items = new ArrayList<>();
+        adapter = new MountainRecyclerViewAdapter(this, items, new MountainRecyclerViewAdapter.OnClickListener() {
+            @Override
+            public void onClick(Mountain item) {
+                Toast.makeText(MainActivity.this, item.toString(), Toast.LENGTH_SHORT).show();
+            }
+        });
+        RecyclerView view = findViewById(R.id.recyclerView);
+        view.setLayoutManager(new LinearLayoutManager(this));
+        view.setAdapter(adapter);
+
         new JsonTask(this).execute(JSON_URL);
     }
 
     @Override
     public void onPostExecute(String json) {
         Log.d("MainActivity", json);
-        Gson gson = new Gson();
-        Type mountainListType = new TypeToken<ArrayList<Mountain>>(){}.getType();
-        mountains = gson.fromJson(json, mountainListType);
+        Type type = new TypeToken<List<Mountain>>() {
+        }.getType();
+        items = gson.fromJson(json, type);
 
-        // Create a new adapter and set it to the RecyclerView
-        adapter = new MountainRecyclerViewAdapter(mountains);
-        recyclerView.setAdapter(adapter);
+        adapter.setItems(items);
+        adapter.notifyDataSetChanged();
     }
-
 }

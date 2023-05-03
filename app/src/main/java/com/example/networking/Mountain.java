@@ -4,17 +4,27 @@ import com.google.gson.annotations.SerializedName;
 
 public class Mountain {
 
-    private String Location;
+    @SerializedName("name")
     private String Name;
+
+    @SerializedName("location")
+    private String Location;
+
     @SerializedName("size")
     private int Height;
-    private AuxData auxdata;
 
-    public Mountain() {
+
+    public Mountain(String Name, String Location, int Height) {
 
         this.Location = Location;
         this.Name = Name;
         this.Height = Height;
+    }
+
+    public Mountain() {
+        this.Name = "MISSING";
+        this.Location = "MISSING";
+        this.Height = -1;
     }
 
     public String getLocation() {
@@ -43,11 +53,10 @@ public class Mountain {
 
     @Override
     public String toString() {
-        return "Mountain{" +
-                "Location='" + Location + '\'' +
-                ", Name='" + Name + '\'' +
-                ", Height=" + Height +
-                ", auxdata=" + auxdata +
-                '}';
+        return "Mountain Details:\n" +
+                "Name: " + Name + '\n' +
+                "Location: " + Location + '\n' +
+                "Height: " + Height + " meters\n";
     }
+
 }
